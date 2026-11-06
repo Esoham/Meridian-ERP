@@ -1,6 +1,6 @@
 """Local-only JSON API for a synthetic manufacturing inventory-to-production flow.
 
-This is *not* production ERP: there is no authentication, tenant isolation,
+This is *not* production ERP: authentication is optional and demo-only; there is no tenant isolation,
 enterprise accounting, backup orchestration or external-system integration.
 """
 from __future__ import annotations
@@ -125,8 +125,10 @@ def get_existing_command(conn, cmd: str, expected: dict):
     fail("Command ID already used for a different operation", 409)
 
 
-def create_app(db_path: str | Path | None = None) -> FastAPI:
+def create_app(db_path: str | Path | None = None, *, auth_required: bool | None = None) -> FastAPI:
     path = Path(db_path or os.environ.get("MERIDIAN_DB_PATH", "./meridian.db"))
+    if auth_required is None:
+        auth_required = os.environ.get('MERIDIAN_REQUIRE_LOGIN','0').strip().lower() in {'1','true','yes'}
     static_home = Path(__file__).resolve().parent / "index.html"
 
     @asynccontextmanager
@@ -134,7 +136,7 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         init_db(path)
         yield
 
-    app = FastAPI(title="Meridian ERP — Local MVP",version="0.4.0",lifespan=lifespan,
+    app = FastAPI(title="Meridian ERP — Local MVP",version="0.5.0",lifespan=lifespan,
                   description="Synthetic, local-only inventory-to-production system; not a production ERP")
 
     @app.get("/", include_in_schema=False)
@@ -148,6 +150,18 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
     @app.get('/enterprise.js', include_in_schema=False)
     def enterprise_js():
         return FileResponse(static_home.parent / 'enterprise.js', media_type='text/javascript')
+
+    @app.get('/enterprise-foundations.js', include_in_schema=False)
+    def foundations_js():
+        return FileResponse(static_home.parent / 'enterprise-foundations.js', media_type='text/javascript')
+
+    @app.get('/enterprise-foundations.css', include_in_schema=False)
+    def foundations_css():
+        return FileResponse(static_home.parent / 'enterprise-foundations.css', media_type='text/css')
+
+    @app.get('/security.js', include_in_schema=False)
+    def security_js():
+        return FileResponse(static_home.parent / 'security.js', media_type='text/javascript')
 
     @app.get("/api/health")
     def health():
@@ -325,6 +339,10 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
     register_routes(app,path,view_wo=view_wo,stock_at=stock_at,audit=audit,fail=fail,exists=exists)
     from .enterprise import register_routes as register_enterprise_routes
     register_enterprise_routes(app,path,audit=audit,fail=fail,exists=exists,stock_at=stock_at)
+    from .foundation import register_routes as register_foundation_routes
+    register_foundation_routes(app,path,audit=audit,fail=fail,exists=exists)
+    from .security import install as install_security
+    install_security(app,path,auth_required=auth_required)
     return app
 
 app = create_app()

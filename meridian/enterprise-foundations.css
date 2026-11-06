@@ -1,0 +1,22 @@
+.foundation-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.foundation-card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:21px;min-width:0}
+.foundation-card h2{margin:0 0 9px}.foundation-card p{font-size:.83rem}
+.foundation-card .form-grid{margin-top:11px}.foundation-table{max-height:300px;overflow:auto}
+.foundation-table table{min-width:430px}
+.foundation-note{border-left:3px solid var(--teal);padding:9px 13px;background:var(--accent-tint,#e5f4f0);font-size:.83rem;color:var(--ink);border-radius:6px}
+.foundation-journal-lines{display:grid;grid-template-columns:1.1fr .8fr .8fr;gap:10px;margin:9px 0}
+.foundation-journal-lines label{font-size:.78rem;font-weight:700;color:var(--muted)}
+.foundation-journal-lines input,.foundation-journal-lines select{width:100%;min-width:0;margin-top:4px;padding:10px;border:1px solid #bdcdd4;border-radius:8px}
+.foundation-card textarea{width:100%;min-height:150px;resize:vertical;border:1px solid #bdcdd4;border-radius:8px;padding:12px;font:13px/1.5 ui-monospace,Consolas,monospace;color:var(--ink);background:var(--card)}
+.foundation-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.foundation-help{font-size:.78rem;color:var(--muted)}
+.foundation-number{font-variant-numeric:tabular-nums}
+.security-backdrop{position:fixed;inset:0;z-index:999;background:rgba(9,27,39,.92);display:grid;place-items:center;padding:22px}
+.security-backdrop[hidden]{display:none}
+.security-dialog{width:min(420px,100%);background:#fff;color:#1b3542;padding:32px;border-radius:15px;box-shadow:0 30px 100px #0006}
+.security-dialog input{display:block;width:100%;border:1px solid #9eafb7;border-radius:8px;padding:11px;margin:5px 0 13px;color:#18313d;background:#fff}
+.security-dialog label{font-weight:700;font-size:.84rem}.security-dialog p{font-size:.82rem}
+.security-dialog .security-error{color:#ad3434;font-weight:700}
+#securityIndicator{font-size:.77rem;color:var(--muted);padding:10px 0}
+@media(max-width:830px){.foundation-panels{grid-template-columns:1fr}}
+@media(max-width:550px){.foundation-journal-lines{grid-template-columns:1fr}.foundation-card{padding:15px}}

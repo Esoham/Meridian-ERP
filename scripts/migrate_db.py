@@ -1,4 +1,4 @@
-"""Backup an existing local SQLite database before additive v0.4 schema migration.
+"""Backup an existing local SQLite database before additive v0.5 schema migration.
 
 Only the development SQLite DB is supported. Never use this as an enterprise backup plan.
 """
@@ -11,7 +11,7 @@ from pathlib import Path
 
 from meridian.db import init_db
 
-TARGET_VERSION = 4
+TARGET_VERSION = 5
 
 
 def migrate(path: Path, backup_dir: Path | None = None) -> Path | None:

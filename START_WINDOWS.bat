@@ -45,6 +45,8 @@ if errorlevel 1 (
     echo ERROR: Database upgrade failed. See backups folder before retrying.
     exit /b 1
 )
+.venv\Scripts\python.exe -m scripts.migrate_db
+if errorlevel 1 exit /b 1
 .venv\Scripts\python.exe -m scripts.seed_demo
 if errorlevel 1 exit /b 1
 echo.

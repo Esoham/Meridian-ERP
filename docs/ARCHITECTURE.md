@@ -42,3 +42,13 @@ New tables: `boms`, `bom_lines`, `work_order_boms`, `stock_reservations`, and `w
 Reservations are outstanding quantities, calculated as `reserved_qty - consumed_qty - released_qty`. Available-to-promise is location on-hand minus outstanding reservations. Allocations and material issues occur in a single `BEGIN IMMEDIATE` write transaction to avoid overspending the same stock on a local SQLite instance. Work-order completion checks sequential routing steps if a routing is configured.
 
 **Caveat:** Releasing a work order does not itself reserve stock; users must call the separate reserve action, and planning does not guarantee future availability. No authentication, user permissions, production-grade migration rollback, finished-good stock receipts, multi-tenancy, or external ERP integration exists.
+
+
+## v0.5 additions — scoped finance, integration preview, local sign-in
+
+- `meridian/foundation.py` models finance companies, journal accounts and posted debit/credit entries, and optional company-specific item standard costs. Only **these** tables are company-scoped; the legacy inventory, orders and warehouse tables remain globally shared demo records.
+- `meridian/security.py` offers **optional** local demo login and server-validated bearer sessions. `MERIDIAN_REQUIRE_LOGIN=1` opts in; no TLS/SSO/MFA/lockout support, and client-supplied actors remain untrusted.
+- `scripts/backup_db.py` uses SQLite online backups and verification checksums. Restore requires a stopped server and a non-existing target filename.
+- `/api/integrations/stock-import/preview` validates CSV data and intentionally does not post stock transactions.
+
+These are foundations, not the completion of enterprise finance, tenant isolation, or business continuity.

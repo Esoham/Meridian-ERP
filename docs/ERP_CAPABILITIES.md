@@ -2,7 +2,7 @@
 
 **Status: Independent local manufacturing demonstration. No commercial deployment, no Infor code or brand copied.**
 
-| Workstream | v0.4 capability | Gaps before production |
+| Workstream | v0.4-v0.5 capability | Gaps before production |
 | --- | --- | --- |
 | Workspace | 9 navigation views, role-based *presentation* presets, widget catalog, personal colors/theme, dense tables, command search | SSO/RBAC, user identity and tenant-specific settings, saved server-side views, audit of configuration |
 | Inventory | Item master, locations, receiving, available/reserved stock, append-only ledger | Transfers, adjustments/reversals, costing/valuation, UOM conversions, lot/serial, bin management, stock counts, valuation |
@@ -30,3 +30,7 @@ Run `python -m scripts.migrate_db` from the project root with the standard Pytho
 ## Product direction
 
 The next engineering milestones are multi-user auth/RBAC, PostgreSQL and migrations, traceable stock holds and corrections, completed-item receipts and inventory costing, real integration adapters, scheduled backups/restore tests, manufacturing planning, and rigorous security/financial assurance. Avoid claims of Fortune 500 market penetration until verified customer adoption.
+
+## v0.5 scope
+
+See [Enterprise Foundations](ENTERPRISE_FOUNDATIONS.md) for demo accounting, optional login, backup and CSV preview, including all production blockers.

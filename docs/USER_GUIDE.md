@@ -51,3 +51,7 @@ Before upgrading from v0.3, **stop the old server** and make a manual copy of th
 - **No space left:** Free disk space, then rerun; the launcher installs pip packages without caching.
 - **Changes not showing:** Press `Ctrl+F5`, and verify that **all** v0.4 files, including `enterprise.js`, `enterprise.css` and `enterprise.py`, are in the same source tree.
 - **Production-ready?** No. Authentication, authorization, financial controls, recovery, and enterprise integrations are not implemented.
+
+## v0.5 additions
+
+Finance & Costing and Integrations appear in the sidebar. The [Enterprise Foundations guide](ENTERPRISE_FOUNDATIONS.md) explains company/account/journal workflows, cost previews, CSV preflight and optional local login. This does not enable production access controls or company-separated inventory.

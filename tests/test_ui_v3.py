@@ -25,10 +25,10 @@ class Inspector(HTMLParser):
             self.page_names.append(values['data-page'])
 
 
-def test_ui_has_nine_distinct_navigation_views():
+def test_ui_has_eleven_distinct_navigation_views():
     inspector = Inspector()
     inspector.feed(HTML.read_text(encoding='utf-8'))
-    pages = {'overview', 'inventory', 'boms', 'production', 'procurement', 'quality', 'reports', 'audit', 'settings'}
+    pages = {'overview', 'inventory', 'boms', 'production', 'procurement', 'quality', 'reports', 'finance', 'integrations', 'audit', 'settings'}
     assert set(inspector.nav_links) == pages
     assert set(inspector.page_names) == pages
     assert len(inspector.ids) == len(set(inspector.ids)), 'Duplicate HTML IDs'

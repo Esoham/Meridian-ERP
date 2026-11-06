@@ -6,7 +6,7 @@ const $=id=>document.getElementById(id);
 const html=escapeHTML;
 const ent={suppliers:[],purchaseOrders:[],quality:[],fields:[],insights:{}};
 const KEY='meridian:v0.4:workspace';
-const MODULES=['overview','inventory','boms','production','procurement','quality','reports','audit','settings'];
+const MODULES=['overview','inventory','boms','production','procurement','quality','reports','finance','integrations','audit','settings'];
 const WIDGETS=['kpis','production','ledger','actions','guide','procurement','quality'];
 const PRESETS={
  operations:WIDGETS,

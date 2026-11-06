@@ -34,7 +34,10 @@ jobs:
         with:
           node-version: '22'
       - name: Validate modular frontend JavaScript
-        run: node --check meridian/enterprise.js
+        run: |
+          node --check meridian/enterprise.js
+          node --check meridian/enterprise-foundations.js
+          node --check meridian/security.js
       - name: Validate embedded dashboard JavaScript
         shell: bash
         run: |

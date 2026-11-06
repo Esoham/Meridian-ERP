@@ -87,7 +87,9 @@ def init_db(path: str | Path) -> None:
     try:
         from .manufacturing import EXTRA_SCHEMA
         from .enterprise import EXTRA_SCHEMA as ENTERPRISE_SCHEMA
-        conn.executescript(SCHEMA + EXTRA_SCHEMA + ENTERPRISE_SCHEMA)
+        from .foundation import FINANCE_SCHEMA
+        from .security import SECURITY_SCHEMA
+        conn.executescript(SCHEMA + EXTRA_SCHEMA + ENTERPRISE_SCHEMA + FINANCE_SCHEMA + SECURITY_SCHEMA)
     finally:
         conn.close()
 

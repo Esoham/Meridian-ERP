@@ -9,3 +9,7 @@ __pycache__/
 .DS_Store
 
 backups/
+
+# Backup copies contain ERP data; never commit them.
+backups/
+*.sha256.json
