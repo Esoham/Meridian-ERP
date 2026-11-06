@@ -1,10 +1,10 @@
-# Meridian ERP — Customizable Manufacturing Workspace v0.4
+# Meridian ERP — Customizable Manufacturing Workspace v0.5
 
 **Independent concept prototype | Python / FastAPI / SQLite | Synthetic manufacturing data**
 
 Meridian ERP is a local-first prototype that shows **receiving parts into a warehouse, checking material availability, releasing a work order, issuing components to production, and completing the job** with an append-only inventory ledger and audit history.
 
-> **Not production ERP.** It has no authentication, company/tenant isolation, general ledger, automated enterprise backup/restore program, EDI, real ERP connectors, or production security controls. Do not expose the API to the internet or use it with employer/customer data. All sample records are fictional.
+> **Not production ERP.** It has optional demo-only authentication and company-scoped manual journal entries, but no genuine multi-tenant data isolation, certified general ledger, automated business-continuity program, EDI, real ERP connectors, or production security controls. Do not expose the API to the internet or use it with employer/customer data. All sample records are fictional.
 
 ## Quick start
 
@@ -15,7 +15,7 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate
 # macOS/Linux: source .venv/bin/activate
 pip install -e '.[dev]'
-python -m scripts.migrate_db  # backs up pre-v0.4 SQLite once
+python -m scripts.migrate_db  # backs up pre-v0.5 SQLite once
 python -m scripts.seed_demo
 uvicorn meridian.api:app --reload --host 127.0.0.1 --port 8000
 ```
@@ -76,11 +76,11 @@ This is a separate proof-of-concept for a potential manufacturing ERP platform�
 You can also run `START_WINDOWS.bat` from this folder. It creates a local virtual environment, installs the dependencies, seeds the fictional data, and starts the server on `127.0.0.1:8000`. Review scripts before running them; this is an independent demo, not an official ERP installer.
 
 
-## What v0.4 adds — independent ERP workspace
+## What v0.4 established — independent ERP workspace
 
 The interface uses familiar enterprise ERP concepts (role-focused workspaces, dense registers, search, controls and customizable widgets) without copying any proprietary UI or claiming compatibility with Infor.
 
-**Nine functional workspace views:** Overview, Inventory, BOM revisions, Production, Purchasing, Quality, Reports, Audit and Workspace Settings. The dashboard includes a cross-module command search (`Ctrl+K`) and mobile navigation.
+**Eleven functional workspace views (as of v0.5):** Overview, Inventory, BOM revisions, Production, Purchasing, Quality, Reports, Finance & Costing, Integrations, Audit and Workspace Settings. The dashboard includes a cross-module command search (`Ctrl+K`) and mobile navigation.
 
 **Purchasing:** supplier master; purchase order draft and approval; multiple PO lines with integer-cent unit prices; partial or final PO receiving with a duplicate-request guard; inbound receipts post atomically to the existing stock ledger and audit log. This is not a financial accounting or payments module.
 
@@ -88,10 +88,21 @@ The interface uses familiar enterprise ERP concepts (role-focused workspaces, de
 
 **Customizations:** workspace label, colors, theme, table density, collapsed navigation, role-oriented homepage presets, individual dashboard widgets and cross-browser preference JSON export/import. These *appearance* settings are saved in the browser only; they do not confer permissions. Item custom fields (text, numeric, yes/no) and validated values are persisted in SQLite with audit records.
 
-**Safe upgrades:** `START_WINDOWS.bat` uses regular Python 3.12/3.13, runs `scripts.migrate_db` before loading sample data, and automatically backs up an existing pre-v0.4 SQLite database once to `backups/`. Backups are local development safeguards, not disaster recovery. **Before upgrading, close the server and keep an independent copy of `meridian.db`.**
+**Safe upgrades:** `START_WINDOWS.bat` uses regular Python 3.12/3.13, runs `scripts.migrate_db` before loading sample data, and automatically backs up an existing pre-v0.5 SQLite database once to `backups/`. Backups are local development safeguards, not disaster recovery. **Before upgrading, close the server and keep an independent copy of `meridian.db`.**
 
-**Tests:** `python -m python -m pytest -q` covers core workflows, BOM/revisions, reservations, routing, purchasing, quality, custom fields and migration. See [docs/ERP_CAPABILITIES.md](docs/ERP_CAPABILITIES.md) for completed features, limitations and future enterprise work.
+**Tests:** `python -m pytest -q` covers core workflows, BOM/revisions, reservations, routing, purchasing, quality, custom fields and migration. See [docs/ERP_CAPABILITIES.md](docs/ERP_CAPABILITIES.md) for completed features, limitations and future enterprise work.
+
+
+## What v0.5 adds — finance, security, backups and integration preview
+
+- **Finance & Costing:** separate illustrative finance entities, charts of accounts, append-only balanced journal entries, trial balances and unit-cost estimates. The existing inventory, warehouse, purchasing and production data remain shared demo data; this is **not** multi-company tenant isolation.
+- **Integrations:** paste CSV receipts for strict read-only validation against current SKU and warehouse codes. No data is imported until a separate authorized workflow is implemented.
+- **Backups and recovery:** `scripts.backup_db` produces an integrity-checked SQLite online backup and SHA-256 manifest; manual restore requires explicit confirmation and a new destination.
+- **Optional demo login:** hashed passwords, short-lived bearer sessions and three basic roles. Disabled by default to preserve existing local use. Not production IAM, SSO or enterprise-grade authorization.
+- **Testing:** 41 local automated tests passed, covering prior manufacturing workflows and new finance, security, import preflight and recovery checks.
+
+Read [Enterprise Foundations](docs/ENTERPRISE_FOUNDATIONS.md) for setup, security limitations and restore commands.
 
 ### Commercial readiness disclaimer
 
-This is a **single-node local prototype** and educational product foundation. No authentication or authorization, robust tenant isolation, tax/accounting controls, secure deployments, inventory costing, lot/serial traceability, regulated quality workflows, or real integrations are provided. It is **not** ready to replace an organization's ERP or to process actual employer/customer data.
+This is a **single-node local prototype** and educational product foundation. Only optional local demo sign-in, company-scoped sample journals and indicative standard costing have been implemented; robust tenant isolation, full accounting, secure deployments, lot/serial traceability, regulated quality workflows and real integrations are not provided. It is **not** ready to replace an organization's ERP or to process actual employer/customer data.
