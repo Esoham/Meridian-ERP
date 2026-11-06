@@ -1,5 +1,7 @@
 # Meridian ERP — Inventory to Production MVP
 
+[![MVP validation](https://github.com/Esoham/Meridian-ERP/actions/workflows/mvp-tests.yml/badge.svg)](https://github.com/Esoham/Meridian-ERP/actions/workflows/mvp-tests.yml)
+
 **Independent concept prototype | Python / FastAPI / SQLite | Synthetic manufacturing data**
 
 Meridian ERP is a local-first prototype demonstrating receiving materials, checking stock availability, releasing production work orders, issuing components, completing jobs, and viewing inventory/audit history.
@@ -41,7 +43,7 @@ Open **http://127.0.0.1:8000** for the operator dashboard or **http://127.0.0.1:
 
 ## Tests
 
-Run `pytest -q` after installing development dependencies. **10 tests passed locally on November 6, 2026** against the supplied prototype; this does not establish production readiness.
+Run `pytest -q` after installing development dependencies. **10 tests passed locally on November 6, 2026** against the supplied prototype; GitHub Actions additionally validates Python 3.11–3.13 and dashboard JavaScript syntax. These checks do not establish production readiness.
 
 ## Documentation
 
