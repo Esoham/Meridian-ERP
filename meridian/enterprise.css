@@ -44,3 +44,8 @@ body[data-theme=dark] .widget-options label,body[data-theme=dark] .data-row{bord
 @media(max-width:1180px){.quick-search kbd{display:none}}
 @media(max-width:880px){.quick-search{font-size:0;padding:8px 12px}.quick-search span{font-size:1.3rem}}
 @media(max-width:700px){.po-line{grid-template-columns:1fr 1fr}.po-line label:first-child{grid-column:1/-1}.quick-search{font-size:0}.insight-grid{gap:13px}.widget-options{grid-template-columns:1fr}}
+
+/* Preserve accessible contrast on linked primary buttons. */
+body a.button:not(.nav-item):not(.alt):not(.ghost){color:#fff}
+body a.button.alt:not(.nav-item),body a.button.ghost:not(.nav-item){color:var(--navy)}
+body[data-theme=dark] a.button.alt:not(.nav-item),body[data-theme=dark] a.button.ghost:not(.nav-item){color:#e7f0f3}
