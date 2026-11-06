@@ -17,6 +17,8 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, StringConstraints, model_validator
 
 from .db import connect, db_write, init_db
+from .manufacturing import (register_routes, reserved_total, own_reserved, consume_reserved,
+                            view_reservations, view_operations)
 
 Nonempty = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
 Code = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=60, pattern=r'^[A-Za-z0-9._-]+$')]
@@ -106,8 +108,12 @@ def view_wo(conn, wo_id: int) -> dict:
         comps.append(dict(item_id=x["item_id"], sku=x["sku"], name=x["name"], per_unit=x["per_unit"],
                           required=needed, issued=x["issued_qty"], remaining=needed-x["issued_qty"],
                           on_hand=onhand, shortage=max(0,needed-x["issued_qty"]-onhand)))
+    linked = conn.execute("""SELECT b.id,b.product_sku,b.revision FROM work_order_boms wb
+        JOIN boms b ON b.id=wb.bom_id WHERE wb.work_order_id=?""",(wo_id,)).fetchone()
     return {"id":wo["id"], "number":wo["number"], "product_name":wo["product_name"],
-            "quantity":wo["quantity"],"status":wo["status"],"components":comps,"created_at":wo["created_at"]}
+            "quantity":wo["quantity"],"status":wo["status"],"components":comps,"created_at":wo["created_at"],
+            "bom":dict(linked) if linked else None,"reservations":view_reservations(conn,wo_id),
+            "operations":view_operations(conn,wo_id)}
 
 
 def get_existing_command(conn, cmd: str, expected: dict):
@@ -128,7 +134,7 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         init_db(path)
         yield
 
-    app = FastAPI(title="Meridian ERP — Local MVP",version="0.1.0",lifespan=lifespan,
+    app = FastAPI(title="Meridian ERP — Local MVP",version="0.2.0",lifespan=lifespan,
                   description="Synthetic, local-only inventory-to-production system; not a production ERP")
 
     @app.get("/", include_in_schema=False)
@@ -190,11 +196,15 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
     def list_stock():
         db=connect(path)
         try:
-            return [dict(x) for x in db.execute("""SELECT i.id AS item_id,i.sku,i.name,l.id AS location_id,
+            rows=[dict(x) for x in db.execute("""SELECT i.id AS item_id,i.sku,i.name,l.id AS location_id,
                 l.code AS location_code,COALESCE(SUM(s.quantity_delta),0) AS on_hand
                 FROM items i CROSS JOIN locations l
                 LEFT JOIN stock_ledger s ON s.item_id=i.id AND s.location_id=l.id
                 GROUP BY i.id,l.id ORDER BY i.sku,l.code""")]
+            for row in rows:
+                row["reserved"] = reserved_total(db,row["item_id"],row["location_id"])
+                row["available"] = row["on_hand"]-row["reserved"]
+            return rows
         finally:db.close()
 
     @app.get("/api/ledger")
@@ -241,8 +251,9 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         with db_write(path) as db:
             wo=view_wo(db,wo_id)
             if wo["status"] != "planned":fail("Only planned work orders can be released",409)
-            if any(c["shortage"] > 0 for c in wo["components"]):
-                fail("Cannot release: stock shortage in one or more components",409)
+            if any(c["remaining"] > stock_at(db,c["item_id"])-reserved_total(db,c["item_id"])
+                   for c in wo["components"]):
+                fail("Cannot release: shortage of unreserved components",409)
             db.execute("UPDATE work_orders SET status='released' WHERE id=?",(wo_id,))
             audit(db,"work_order.released","work_order",wo_id,body.actor,{"components":len(wo["components"])})
             return view_wo(db,wo_id)
@@ -261,8 +272,19 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
             if not exists(db,"locations",body.location_id):fail("Location does not exist",404)
             max_allowed=line["per_unit"]*wo["quantity"]-line["issued_qty"]
             if body.quantity > max_allowed:fail(f"Issue exceeds remaining requirement ({max_allowed})",409)
-            if stock_at(db,body.item_id,body.location_id) < body.quantity:
+            on_hand=stock_at(db,body.item_id,body.location_id)
+            if on_hand < body.quantity:
                 fail("Insufficient on-hand stock at selected location",409)
+            owned=own_reserved(db,wo_id,body.item_id,body.location_id)
+            free=on_hand-reserved_total(db,body.item_id,body.location_id)
+            if owned:
+                if body.quantity > owned:
+                    fail("Issue exceeds the work order's reserved quantity at this location",409)
+                consume_reserved(db,wo_id,body.item_id,body.location_id,body.quantity)
+                audit(db,"reservation.consumed","work_order",wo_id,body.actor,
+                      {"item_id":body.item_id,"location_id":body.location_id,"quantity":body.quantity})
+            elif body.quantity > free:
+                fail("Insufficient unreserved stock at selected location",409)
             cur=db.execute("""INSERT INTO stock_ledger(item_id,location_id,work_order_id,quantity_delta,entry_type,reference,command_id,actor)
                 VALUES (?,?,?,?,'issue',?,?,?)""",(body.item_id,body.location_id,wo_id,-body.quantity,body.reference,body.command_id,body.actor))
             db.execute("UPDATE work_order_lines SET issued_qty=issued_qty+? WHERE id=?",(body.quantity,line["id"]))
@@ -278,6 +300,8 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         with db_write(path) as db:
             wo=view_wo(db,wo_id)
             if wo["status"] != "materials_issued":fail("All required materials must be issued before completion",409)
+            if any(op["status"]!="done" for op in view_operations(db,wo_id)):
+                fail("All routing operations must be finished before completing the work order",409)
             db.execute("UPDATE work_orders SET status='completed' WHERE id=?",(wo_id,))
             audit(db,"work_order.completed","work_order",wo_id,body.actor,{})
             return view_wo(db,wo_id)
@@ -290,6 +314,7 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
             return [dict(x) for x in db.execute("SELECT * FROM audit_log ORDER BY id DESC LIMIT ?",(limit,))]
         finally:db.close()
 
+    register_routes(app,path,view_wo=view_wo,stock_at=stock_at,audit=audit,fail=fail,exists=exists)
     return app
 
 app = create_app()

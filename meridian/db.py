@@ -85,7 +85,8 @@ def connect(path: str | Path) -> sqlite3.Connection:
 def init_db(path: str | Path) -> None:
     conn = connect(path)
     try:
-        conn.executescript(SCHEMA)
+        from .manufacturing import EXTRA_SCHEMA
+        conn.executescript(SCHEMA + EXTRA_SCHEMA)
     finally:
         conn.close()
 

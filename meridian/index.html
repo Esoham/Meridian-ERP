@@ -1,138 +1,101 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Meridian ERP · Manufacturing Operations</title>
 <style>
-:root{--navy:#142c39;--teal:#087b72;--green:#19765e;--page:#f3f7f8;--line:#dce6e8;--ink:#203441;--muted:#667b85}
-*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{background:var(--navy);color:#fff}.header{max-width:1180px;padding:20px 25px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
-.header strong{font-size:1.25rem;letter-spacing:.04em}.header small{display:block;color:#c1d3d6;font-size:.75rem}.header a{color:#d8f7ec;text-decoration:none;margin-left:18px}
-.warning{background:#e9f5ed;color:#285a47;padding:11px 20px;text-align:center;border-bottom:1px solid #cce1d2}
-main{max-width:1180px;margin:30px auto 65px;padding:0 25px}h1{font-size:2rem;letter-spacing:-.035em}h2{font-size:1.22rem;margin:0 0 13px}h3{margin:0 0 8px}p{color:var(--muted)}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:25px 0}
-.metric,.panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:21px}
-.metric strong{display:block;font-size:1.8rem}.metric span{color:var(--muted);font-size:.84rem}
-.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.stack{display:grid;gap:20px}
-label{display:block;font-weight:650;font-size:.87rem;margin:9px 0}input,select{display:block;width:100%;border:1px solid #b8cbd1;background:#fff;color:var(--ink);border-radius:8px;padding:10px;margin-top:4px;font:inherit}
-button{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:10px 15px;font-weight:700;cursor:pointer;margin-top:9px}
-button.secondary{background:var(--teal)}button:disabled{opacity:.6;cursor:wait}
-button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #d99c45;outline-offset:3px}
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 13px}.span2{grid-column:1/-1}
-table{width:100%;border-collapse:collapse}td,th{padding:10px 7px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:.8rem}
-.wrap{overflow-x:auto}.muted{color:var(--muted)}.help{font-size:.85rem}
-.order{border:1px solid var(--line);border-radius:9px;padding:15px;margin:12px 0}.order h3{font-size:1rem}
-.tag{font-size:.76rem;color:var(--teal);font-weight:750;text-transform:uppercase}
-.order li{color:var(--muted);font-size:.85rem}
-#notice{display:none;margin:14px 0;padding:13px;border-radius:8px;background:#e1f3e9;color:#155e3e;border:1px solid #bde1cc}
-#notice.error{background:#fff0ed;color:#a43830;border-color:#edc1bd}
-footer{padding:25px;text-align:center;color:var(--muted);font-size:.83rem}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){main{padding:0 14px}.metrics,.formgrid{grid-template-columns:1fr}.span2{grid-column:auto}.header{padding:16px}.panel{padding:15px}}
+:root{--navy:#142c39;--navy2:#1b3b49;--teal:#087b72;--green:#19765e;--amber:#ac6613;--red:#b14342;--page:#f4f7f8;--line:#dce6e8;--ink:#203441;--muted:#667b85;--white:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--page);font:15px/1.55 system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink)}
+a{color:var(--teal)}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e8b166;outline-offset:2px}
+header{background:var(--navy);color:white}.nav{max-width:1200px;margin:auto;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand{font-weight:850;letter-spacing:.045em;font-size:1.17rem}.brand small{display:block;font-size:.73rem;font-weight:550;color:#c3d7dc;letter-spacing:.07em}.navlinks{display:flex;gap:18px;flex-wrap:wrap}.navlinks a{color:#e6f6f5;text-decoration:none;font-weight:600;font-size:.9rem}
+.banner{background:#e6f4ed;border-bottom:1px solid #c9e3d6;font-size:.88rem;color:#295d4b;padding:11px 26px;text-align:center}main{max-width:1200px;margin:34px auto 70px;padding:0 26px}.page-head{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center;margin-bottom:24px}h1{font-size:clamp(1.8rem,4vw,2.55rem);letter-spacing:-.04em;margin:0 0 2px}h2{font-size:1.35rem;letter-spacing:-.02em;margin:0 0 13px}h3{font-size:1.05rem;margin:0 0 12px}p{margin:6px 0 14px}.muted,.help{color:var(--muted)}.help{font-size:.85rem}.pill{display:inline-block;background:#e0eee8;color:#22664c;border-radius:50px;padding:4px 11px;font-weight:720;font-size:.77rem}.status-planned{background:#e8edf1;color:#345366}.status-released{background:#e3f1fa;color:#276281}.status-materials_issued{background:#ebf6ec;color:#267046}.status-completed{background:#d9eee0;color:#1c6944}.danger{background:#fde6e4;color:#a13f3b}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:25px}.stat{background:white;padding:20px;border:1px solid var(--line);border-radius:13px}.stat .num{font-size:2rem;font-weight:800;letter-spacing:-.05em}.stat .lbl{font-size:.84rem;color:var(--muted);font-weight:650}
+.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}.stack{display:grid;gap:20px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:23px;min-width:0}.panel-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:9px}.panel-head h2{margin:0}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}label{font-size:.84rem;font-weight:720;display:flex;flex-direction:column;gap:5px}input,select{width:100%;padding:10px 12px;border:1px solid #bdccd1;border-radius:8px;background:#fff;color:var(--ink);font:inherit}button{border:0;border-radius:8px;padding:10px 15px;font-weight:750;background:var(--navy);color:white;cursor:pointer;font:inherit;font-size:.9rem}button:hover{background:var(--navy2)}button.outline{border:1px solid var(--navy);color:var(--navy);background:white}button.green{background:var(--green)}button:disabled{opacity:.5;cursor:not-allowed}.full{grid-column:1/-1}.form-action{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.form-action .help{margin:0}.divider{border:0;border-top:1px solid var(--line);margin:18px 0}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left;font-size:.87rem}th{color:var(--muted);font-size:.74rem;text-transform:uppercase;letter-spacing:.04em}th,td{padding:12px 9px;border-bottom:1px solid var(--line);vertical-align:top}td strong{font-weight:750}.empty{padding:20px;color:var(--muted);text-align:center}code{font-size:.9em}#notice{display:none;margin:0 0 20px;padding:12px 15px;border-radius:9px;border:1px solid #c6e8d4;background:#e8f7ee;color:#215d43}#notice.error{border-color:#e5b9b5;background:#fff0ee;color:#9a3431}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.smallbtn{padding:7px 10px;font-size:.8rem}.wo-card{border:1px solid var(--line);border-radius:11px;padding:15px;margin-bottom:14px}.wo-title{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.wo-title strong{display:block}.wo-card .muted{font-size:.84rem}.list-lines{font-size:.82rem;color:var(--muted);margin:8px 0 0;padding-left:20px}.list-lines li{margin:3px 0}.callout{padding:13px;border-left:3px solid var(--teal);background:#edf6f4;color:#365a61;margin-bottom:16px;font-size:.85rem}
+footer{max-width:1200px;margin:0 auto 30px;padding:0 26px;color:var(--muted);font-size:.83rem}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.stats,.form-grid{grid-template-columns:1fr}.nav,main,footer{padding-left:17px;padding-right:17px}.panel{padding:18px}.stat{padding:14px}}
 </style></head><body>
-<header><div class="header"><div><strong>MERIDIAN ERP</strong><small>MANUFACTURING OPERATIONS · LOCAL MVP v0.1</small></div><nav><a href="#inventory">Inventory</a><a href="#production">Production</a><a href="#audit">Audit</a><a href="/docs">API reference</a></nav></div></header>
-<div class="warning">Independent prototype · Synthetic data only · No authentication · Never expose this development server publicly</div>
-<main>
-<h1>Operations overview</h1><p>Track components from warehouse receiving to production issue with a traceable stock ledger.</p>
-<button id="refresh" type="button">Refresh records</button>
+<header><div class="nav"><div class="brand">MERIDIAN ERP <small>MANUFACTURING OPERATIONS · PROTOTYPE v0.2</small></div><nav class="navlinks" aria-label="Sections"><a href="#inventory">Inventory</a><a href="#boms">BOMs</a><a href="#production">Production</a><a href="#history">Audit</a><a href="/docs" target="_blank" rel="noopener noreferrer">API docs ↗</a></nav></div></header>
+<div class="banner"><strong>Local demo only:</strong> synthetic inventory, no authentication, no real ERP data or production deployment.</div>
+<main><div class="page-head"><div><h1>Operations overview</h1><p class="muted">Track parts from receiving through production issue, with traceable events.</p></div><button class="outline" type="button" id="refresh">↻ Refresh data</button></div>
 <div id="notice" role="status" aria-live="polite"></div>
-<section class="metrics">
-<div class="metric"><strong id="itemCount">–</strong><span>Items</span></div>
-<div class="metric"><strong id="locCount">–</strong><span>Locations</span></div>
-<div class="metric"><strong id="orderCount">–</strong><span>Work orders</span></div>
-<div class="metric"><strong id="moveCount">–</strong><span>Ledger entries</span></div>
-</section>
-<div class="grid"><div class="stack">
-<section id="inventory" class="panel"><h2>On-hand inventory</h2><p class="help">Balances calculated from immutable receiving and issuing transactions.</p><div class="wrap"><table><thead><tr><th>SKU</th><th>Location</th><th>On hand</th></tr></thead><tbody id="stockRows"></tbody></table></div></section>
-<section id="production" class="panel"><h2>Production work orders</h2><p class="help">Release requires available stock. Materials must be issued before a job can be completed.</p><div id="orderRows">Loading…</div><hr><h3>Create a planned work order</h3>
-<form id="orderForm" class="formgrid">
-<label>Work order number<input name="number" placeholder="WO-1002" required></label>
-<label>Product name<input name="product_name" placeholder="Control Box Assembly" required></label>
+<section class="stats" aria-label="Key metrics"><div class="stat"><div class="num" id="countItems">–</div><div class="lbl">Item master records</div></div><div class="stat"><div class="num" id="countLocs">–</div><div class="lbl">Locations</div></div><div class="stat"><div class="num" id="countOrders">–</div><div class="lbl">Work orders</div></div><div class="stat"><div class="num" id="countMoves">–</div><div class="lbl">Stock transactions</div></div></section>
+<div class="layout"><div class="stack">
+<section class="panel" id="inventory"><div class="panel-head"><h2>On-hand inventory</h2><span class="pill">Derived from ledger</span></div><div class="table-wrap"><table><thead><tr><th>Item</th><th>Location</th><th>On hand</th><th>Reserved</th><th>Available</th></tr></thead><tbody id="stockRows"><tr><td colspan="3" class="empty">Loading stock…</td></tr></tbody></table></div></section>
+<section class="panel" id="boms"><h2>Bill of Materials — revisions</h2>
+<p class="help">Create a draft, activate the approved revision, and generate work orders from its frozen component list.</p>
+<form id="bomForm" class="form-grid">
+<label>Finished product SKU<input name="product_sku" value="BOX-002" required></label>
+<label>Product name<input name="product_name" value="Control Box" required></label>
+<label>Revision<input name="revision" value="A" required></label>
+<label>Component item<select name="item_id" id="bomItem" required></select></label>
+<label>Qty per finished unit<input name="per_unit" type="number" value="4" min="1" required></label>
+<div class="full"><button type="submit">Create draft BOM</button></div></form>
+<div id="bomList"></div>
+<hr class="divider"><h3>Create work order from approved BOM</h3>
+<form id="bomOrderForm" class="form-grid"><label>Active BOM<select name="bom_id" id="bomOrderSelect" required></select></label>
+<label>New order number<input name="number" required placeholder="WO-2002"></label>
 <label>Build quantity<input name="quantity" type="number" min="1" value="1" required></label>
-<label>Component SKU<select name="item_id" id="orderItem" required></select></label>
-<label>Quantity per build<input name="per_unit" type="number" min="1" value="1" required></label>
-<div class="span2"><p class="help">This form creates one component; the API supports a full component array.</p><button type="submit">Create work order</button></div>
-</form></section>
-<section id="audit" class="panel"><h2>Recent inventory ledger</h2><div class="wrap"><table><thead><tr><th>Type</th><th>SKU</th><th>Location</th><th>Quantity</th><th>Reference</th></tr></thead><tbody id="ledgerRows"></tbody></table></div><p class="help"><a href="/api/audit">Audit JSON</a> · <a href="/api/ledger">Stock ledger JSON</a></p></section>
+<div class="full"><button type="submit">Create from revision</button></div></form></section>
+<section class="panel" id="production"><div class="panel-head"><h2>Production work orders</h2><span class="pill">Approval required</span></div><p class="help">Release checks material availability. Issue from an actual warehouse location. Completion requires all components to be issued.</p><div id="workOrderList" class="empty">Loading work orders…</div>
+<hr class="divider"><h3>Add production routing</h3>
+<p class="help">Add two sequential steps to a planned order: Assembly (10), then Inspection (20).</p>
+<form id="routingForm" class="form-grid"><label>Planned order<select name="wo_id" id="routingWO" required></select></label>
+<div class="full"><button type="submit">Add Assembly + Inspection</button></div></form>
+<hr class="divider"><h3>Create work order</h3><form id="workOrderForm" class="form-grid"><label>Work order number<input name="number" required placeholder="WO-1002"></label><label>Product name<input name="product_name" required placeholder="Control Box Assembly"></label><label>Build quantity<input name="quantity" type="number" min="1" required value="1"></label><label>Component item<select name="component_id" id="woItem" required></select></label><label>Quantity per build<input name="per_unit" type="number" min="1" required value="1"></label><label class="full">Note <span class="help">This first MVP supports one component per new order. More components can be set through the API by posting a full components array.</span></label><div class="full form-action"><button type="submit">Create planned work order</button></div></form>
+</section>
+<section class="panel" id="history"><div class="panel-head"><h2>Recent stock ledger</h2><span class="pill">Append-only</span></div><div class="table-wrap"><table><thead><tr><th>Type</th><th>Item</th><th>Location</th><th>Qty change</th><th>Reference</th></tr></thead><tbody id="ledgerRows"></tbody></table></div><p class="help">More history and audit event details: <a href="/api/audit" target="_blank" rel="noopener noreferrer">Audit JSON</a> · <a href="/api/ledger" target="_blank" rel="noopener noreferrer">Ledger JSON</a>.</p></section>
 </div><aside class="stack">
-<section class="panel"><h2>Receive stock</h2><form id="receiveForm" class="formgrid">
-<label>Item<select name="item_id" id="receiveItem" required></select></label>
-<label>Location<select name="location_id" id="receiveLoc" required></select></label>
-<label>Quantity<input name="quantity" type="number" min="1" value="10" required></label>
-<label>Reference<input name="reference" value="DEMO-RECEIPT" required></label>
-<div class="span2"><button class="secondary" type="submit">Post receipt</button></div>
-</form></section>
-<section class="panel"><h2>Issue components</h2><form id="issueForm" class="formgrid">
-<label class="span2">Released work order<select name="wo_id" id="issueOrder" required></select></label>
-<label>Component<select name="item_id" id="issueItem" required></select></label>
-<label>Location<select name="location_id" id="issueLoc" required></select></label>
-<label>Quantity<input name="quantity" type="number" min="1" value="1" required></label>
-<label>Reference<input name="reference" value="PRODUCTION-ISSUE" required></label>
-<div class="span2"><button type="submit">Post material issue</button></div>
-</form></section>
-<section class="panel"><h2>Master data</h2>
-<form id="itemForm" class="formgrid"><label>SKU<input name="sku" required placeholder="PART-101"></label><label>Item name<input name="name" required placeholder="Sample component"></label><div class="span2"><button type="submit">Add item</button></div></form>
-<hr>
-<form id="locForm" class="formgrid"><label>Location code<input name="code" required placeholder="MAIN-B"></label><label>Location name<input name="name" required placeholder="Secondary warehouse"></label><div class="span2"><button type="submit">Add location</button></div></form>
-</section></aside></div>
-</main><footer>Meridian ERP v0.1 · Independent prototype · No real customer data</footer>
+<section class="panel"><h2>Receive inventory</h2><p class="help">A receipt posts a positive ledger entry; it cannot be edited afterward.</p><form id="receiveForm" class="form-grid"><label class="full">Item<select name="item_id" id="receiveItem" required></select></label><label class="full">Warehouse location<select name="location_id" id="receiveLoc" required></select></label><label>Quantity<input name="quantity" type="number" min="1" value="10" required></label><label>Reference<input name="reference" value="DEMO-RECEIPT" required></label><div class="full"><button class="green" type="submit">Post receipt</button></div></form></section>
+<section class="panel"><h2>Issue material to production</h2><p class="help">Choose a released work order. Every issue checks remaining required quantity and location-specific on-hand stock.</p><form id="issueForm" class="form-grid"><label class="full">Released work order<select name="wo_id" id="issueWO" required></select></label><label class="full">Component<select name="item_id" id="issueItem" required></select></label><label class="full">Issue from location<select name="location_id" id="issueLoc" required></select></label><label>Quantity<input name="quantity" id="issueQty" type="number" min="1" value="1" required></label><label>Reference<input name="reference" value="PRODUCTION-ISSUE" required></label><div class="full"><button type="submit">Post material issue</button></div></form></section>
+<section class="panel"><h2>Master data</h2><div class="callout">Create one sample item and one location, then post a receipt to make stock available.</div><form id="itemForm" class="form-grid"><label>SKU<input name="sku" placeholder="PART-101" required></label><label>Item name<input name="name" placeholder="Sample component" required></label><div class="full"><button class="outline" type="submit">Add item</button></div></form><hr class="divider"><form id="locationForm" class="form-grid"><label>Location code<input name="code" placeholder="WAREHOUSE-B" required></label><label>Location name<input name="name" placeholder="Secondary warehouse" required></label><div class="full"><button class="outline" type="submit">Add location</button></div></form></section>
+</aside></div></main><footer>Meridian ERP MVP · Independent portfolio concept · Synthetic data only · <a href="/docs">API reference</a></footer>
 <script>
-"use strict";
-const el=id=>document.getElementById(id);
-const state={items:[],locs:[],stock:[],orders:[],ledger:[]};
-const esc=x=>String(x==null?"":x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-const formValues=form=>Object.fromEntries(new FormData(form));
-const cmd=()=>("cmd-"+(crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2)));
-function flash(message,error){const n=el("notice");n.textContent=message;n.className=error?"error":"";n.style.display="block";}
-async function api(path,method,body){
-const res=await fetch(path,{method:method||"GET",headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
-const data=await res.json();if(!res.ok)throw Error(typeof data.detail==="string"?data.detail:JSON.stringify(data.detail));return data;
-}
-const opts=(rows,label)=>rows.map(x=>'<option value="'+Number(x.id)+'">'+esc(label(x))+"</option>").join("");
-const preserve=(id,markup)=>{const node=el(id),old=node.value;node.innerHTML=markup;if([...node.options].some(o=>o.value===old))node.value=old;};
-async function refresh(){
-try{const results=await Promise.all(["/api/items","/api/locations","/api/stock","/api/work-orders","/api/ledger"].map(p=>api(p)));
-[state.items,state.locs,state.stock,state.orders,state.ledger]=results;render();
-}catch(error){flash("Unable to fetch records: "+error.message,true);}
-}
+'use strict';
+const $=id=>document.getElementById(id);
+const state={items:[],locations:[],orders:[],stock:[],ledger:[],boms:[]};
+const esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const options=(items,makeLabel)=>items.map(x=>`<option value="${Number(x.id)}">${esc(makeLabel(x))}</option>`).join('');
+const notice=(message,bad=false)=>{const n=$('notice');n.textContent=message;n.className=bad?'error':'';n.style.display='block';n.scrollIntoView({behavior:'smooth',block:'nearest'});};
+async function api(path,method='GET',body=null){const r=await fetch(path,{method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});const result=await r.json();if(!r.ok)throw Error(typeof result.detail==='string'?result.detail:JSON.stringify(result.detail));return result;}
+async function refresh(){try{const [items,locs,stock,orders,ledger,boms]=await Promise.all(['/api/items','/api/locations','/api/stock','/api/work-orders','/api/ledger','/api/boms'].map(p=>api(p)));Object.assign(state,{items,locations:locs,stock,orders,ledger,boms});render();}catch(e){notice('Cannot load data: '+e.message,true);}}
 function render(){
-el("itemCount").textContent=state.items.length;
-el("locCount").textContent=state.locs.length;
-el("orderCount").textContent=state.orders.length;
-el("moveCount").textContent=state.ledger.length;
-el("stockRows").innerHTML=state.stock.map(x=>"<tr><td>"+esc(x.sku)+"</td><td>"+esc(x.location_code)+"</td><td>"+Number(x.on_hand)+"</td></tr>").join("")||'<tr><td colspan="3">No inventory records</td></tr>';
-el("ledgerRows").innerHTML=state.ledger.slice(0,15).map(x=>"<tr><td>"+esc(x.entry_type)+"</td><td>"+esc(x.sku)+"</td><td>"+esc(x.location_code)+"</td><td>"+Number(x.quantity_delta)+"</td><td>"+esc(x.reference)+"</td></tr>").join("")||'<tr><td colspan="5">No ledger entries</td></tr>';
-const items=opts(state.items,x=>x.sku+" · "+x.name),locs=opts(state.locs,x=>x.code+" · "+x.name);
-preserve("orderItem",items);preserve("receiveItem",items);
-preserve("receiveLoc",locs);preserve("issueLoc",locs);
-preserve("issueOrder",opts(state.orders.filter(x=>x.status==="released"),x=>x.number+" · "+x.product_name));
-renderIssueComponents();
-el("orderRows").innerHTML=state.orders.map(o=>{
-const items=o.components.map(x=>"<li>"+esc(x.sku)+": "+Number(x.issued)+"/"+Number(x.required)+" issued · "+Number(x.on_hand)+" available</li>").join("");
-const action=o.status==="planned"?"release":o.status==="materials_issued"?"complete":"";
-const button=action?'<button data-id="'+Number(o.id)+'" data-action="'+action+'">'+(action==="release"?"Release":"Complete")+'</button>':"";
-return '<article class="order"><div class="tag">'+esc(o.status.replace("_"," "))+'</div><h3>'+esc(o.number)+" · "+esc(o.product_name)+'</h3><div class="help">Build '+Number(o.quantity)+'</div><ul>'+items+"</ul>"+button+"</article>";
-}).join("")||'<p>No work orders yet.</p>';
+$('countItems').textContent=state.items.length;$('countLocs').textContent=state.locations.length;$('countOrders').textContent=state.orders.length;$('countMoves').textContent=state.ledger.length;
+$('stockRows').innerHTML=state.stock.length?state.stock.map(s=>`<tr><td><strong>${esc(s.sku)}</strong><br><span class="muted">${esc(s.name)}</span></td><td>${esc(s.location_code)}</td><td><strong>${Number(s.on_hand)}</strong></td><td>${Number(s.reserved)}</td><td>${Number(s.available)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No items or locations yet.</td></tr>';
+$('ledgerRows').innerHTML=state.ledger.length?state.ledger.slice(0,12).map(x=>`<tr><td>${esc(x.entry_type)}</td><td>${esc(x.sku)}</td><td>${esc(x.location_code)}</td><td>${x.quantity_delta>0?'+':''}${Number(x.quantity_delta)}</td><td>${esc(x.reference)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No stock transactions.</td></tr>';
+const itemOpts=options(state.items,i=>`${i.sku} · ${i.name}`),locOpts=options(state.locations,l=>`${l.code} · ${l.name}`);
+const prev={recvItem:$('receiveItem').value,recvLoc:$('receiveLoc').value,issueLoc:$('issueLoc').value,woItem:$('woItem').value,wo:$('issueWO').value,component:$('issueItem').value};
+$('bomItem').innerHTML=itemOpts;
+$('bomOrderSelect').innerHTML=options(state.boms.filter(b=>b.status==='active'),b=>b.product_sku+' Rev '+b.revision);
+$('routingWO').innerHTML=options(state.orders.filter(o=>o.status==='planned'&&!o.operations.length),o=>o.number);
+$('bomList').innerHTML=state.boms.map(b=>`<article class="wo-card"><strong>${esc(b.product_sku)} — revision ${esc(b.revision)}</strong> <span class="pill">${esc(b.status)}</span><p class="help">${esc(b.product_name)}: ${b.components.map(c=>esc(c.sku)+' × '+Number(c.per_unit)).join(', ')}</p>${b.status==='draft'?`<button class="smallbtn" data-bom="${Number(b.id)}">Activate BOM</button>`:''}</article>`).join('')||'<p class="help">No BOMs created yet.</p>';
+$('receiveItem').innerHTML=itemOpts;$('woItem').innerHTML=itemOpts;$('receiveLoc').innerHTML=locOpts;$('issueLoc').innerHTML=locOpts;
+for(const [id,key] of [['receiveItem','recvItem'],['woItem','woItem'],['receiveLoc','recvLoc'],['issueLoc','issueLoc']]){if([...$(id).options].some(x=>x.value===prev[key]))$(id).value=prev[key]}
+$('issueWO').innerHTML=state.orders.filter(o=>o.status==='released').map(o=>`<option value="${Number(o.id)}">${esc(o.number)} · ${esc(o.product_name)}</option>`).join('');
+if([...$('issueWO').options].some(x=>x.value===prev.wo))$('issueWO').value=prev.wo;
+renderComponents(prev.component);
+$('workOrderList').className=state.orders.length?'':'empty';
+$('workOrderList').innerHTML=state.orders.length?state.orders.map(o=>{
+const items=o.components.map(c=>`<li>${esc(c.sku)}: ${Number(c.issued)}/${Number(c.required)} issued · ${Number(c.on_hand)} available${c.shortage>0?` · <strong class="danger">short ${Number(c.shortage)}</strong>`:''}</li>`).join('');
+const allDone=o.operations.every(x=>x.status==='done');
+const buttons=o.status==='planned'?`<button class="smallbtn" data-wo="${o.id}" data-action="release">Release work order</button>`:o.status==='materials_issued'&&allDone?`<button class="smallbtn green" data-wo="${o.id}" data-action="complete">Complete work order</button>`:'';
+const reserve=o.status==='released'?`<button class="smallbtn outline" data-wo="${o.id}" data-action="reserve">Reserve materials</button><button class="smallbtn outline" data-wo="${o.id}" data-action="release-reservations">Release allocations</button>`:'';
+const route=o.operations.map(x=>`<li>${Number(x.sequence)}. ${esc(x.operation)} · ${esc(x.work_center)} · ${esc(x.status)} ${o.status==='materials_issued'&&x.status!=='done'?`<button class="smallbtn" data-wo="${o.id}" data-seq="${Number(x.sequence)}" data-op="${x.status==='pending'?'start':'finish'}">${x.status==='pending'?'Start':'Finish'}</button>`:''}</li>`).join('');
+return `<article class="wo-card"><div class="wo-title"><div><strong>${esc(o.number)}</strong><span class="muted">${esc(o.product_name)} · Build ${Number(o.quantity)}</span></div><span class="pill status-${esc(o.status)}">${esc(o.status.replace('_',' '))}</span></div><ul class="list-lines">${items}</ul>${o.bom?`<p class="help">Source BOM: ${esc(o.bom.product_sku)} revision ${esc(o.bom.revision)}</p>`:''}${o.reservations.length?`<p class="help">Reserved: ${o.reservations.reduce((t,r)=>t+Number(r.outstanding),0)} outstanding units</p>`:''}${route?`<strong class="help">Routing</strong><ul class="list-lines">${route}</ul>`:''}<div class="actions">${buttons}${reserve}</div></article>`}).join(''):'No work orders yet.';
 }
-function renderIssueComponents(){
-const wo=state.orders.find(x=>String(x.id)===el("issueOrder").value),comps=wo?wo.components.filter(x=>x.remaining>0):[];
-preserve("issueItem",comps.map(x=>'<option value="'+Number(x.item_id)+'">'+esc(x.sku)+" · remaining "+Number(x.remaining)+"</option>").join(""));
-}
-async function submit(form,path,payload,message){const btn=form.querySelector('button[type="submit"]');btn.disabled=true;
-try{await api(path,"POST",payload);flash(message,false);await refresh();form.reset();}catch(e){flash(e.message,true);}finally{btn.disabled=false;}}
-el("itemForm").addEventListener("submit",e=>{e.preventDefault();const f=formValues(e.target);submit(e.target,"/api/items",{sku:f.sku,name:f.name},"Item created.");});
-el("locForm").addEventListener("submit",e=>{e.preventDefault();const f=formValues(e.target);submit(e.target,"/api/locations",f,"Location created.");});
-el("receiveForm").addEventListener("submit",e=>{e.preventDefault();const f=formValues(e.target);submit(e.target,"/api/stock/receive",{item_id:Number(f.item_id),location_id:Number(f.location_id),quantity:Number(f.quantity),reference:f.reference,command_id:cmd()},"Receipt posted.");});
-el("orderForm").addEventListener("submit",e=>{e.preventDefault();const f=formValues(e.target);submit(e.target,"/api/work-orders",{number:f.number,product_name:f.product_name,quantity:Number(f.quantity),components:[{item_id:Number(f.item_id),per_unit:Number(f.per_unit)}]},"Work order created.");});
-el("issueForm").addEventListener("submit",e=>{e.preventDefault();const f=formValues(e.target);
-if(!f.wo_id){flash("Select a released work order first.",true);return;}
-submit(e.target,"/api/work-orders/"+Number(f.wo_id)+"/issue",{item_id:Number(f.item_id),location_id:Number(f.location_id),quantity:Number(f.quantity),reference:f.reference,command_id:cmd()},"Material issued.");
-});
-el("issueOrder").addEventListener("change",renderIssueComponents);
-el("orderRows").addEventListener("click",async e=>{
-const button=e.target.closest("button[data-action]");if(!button)return;button.disabled=true;
-try{await api("/api/work-orders/"+Number(button.dataset.id)+"/"+button.dataset.action,"POST",{actor:"demo.operator"});flash("Work order "+button.dataset.action+"d.",false);await refresh();}
-catch(error){flash(error.message,true);}finally{button.disabled=false;}
-});
-el("refresh").addEventListener("click",refresh);
+function renderComponents(prefer){const o=state.orders.find(x=>String(x.id)===$('issueWO').value);const entries=(o?.components||[]).filter(c=>c.remaining>0);$('issueItem').innerHTML=entries.map(c=>`<option value="${c.item_id}">${esc(c.sku)} · remaining ${c.remaining}</option>`).join('');if([...$('issueItem').options].some(x=>x.value===prefer))$('issueItem').value=prefer;setRemaining();}
+function setRemaining(){const o=state.orders.find(x=>String(x.id)===$('issueWO').value);const c=o?.components.find(x=>String(x.item_id)===$('issueItem').value);if(c){$('issueQty').max=c.remaining;$('issueQty').value=Math.max(1,Math.min(c.remaining,Number($('issueQty').value)||1));}}
+$('issueWO').addEventListener('change',()=>renderComponents());$('issueItem').addEventListener('change',setRemaining);
+$('refresh').addEventListener('click',refresh);
+const fields=form=>Object.fromEntries(new FormData(form));
+const command=()=>('cmd-'+(typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(16).slice(2)));
+async function action(form,path,body,label){const button=form.querySelector('button[type="submit"]');button.disabled=true;try{await api(path,'POST',body);notice(label);await refresh();}catch(e){notice(e.message,true);}finally{button.disabled=false;}}
+$('itemForm').addEventListener('submit',e=>{e.preventDefault();const f=fields(e.target);action(e.target,'/api/items',{sku:f.sku,name:f.name},'Item created.');});
+$('locationForm').addEventListener('submit',e=>{e.preventDefault();const f=fields(e.target);action(e.target,'/api/locations',f,'Location created.');});
+$('receiveForm').addEventListener('submit',e=>{e.preventDefault();const f=fields(e.target);action(e.target,'/api/stock/receive',{...f,item_id:Number(f.item_id),location_id:Number(f.location_id),quantity:Number(f.quantity),command_id:command()},'Receipt posted to the immutable stock ledger.');});
+$('workOrderForm').addEventListener('submit',e=>{e.preventDefault();const f=fields(e.target);action(e.target,'/api/work-orders',{number:f.number,product_name:f.product_name,quantity:Number(f.quantity),components:[{item_id:Number(f.component_id),per_unit:Number(f.per_unit)}]},'Work order created.');});
+$('issueForm').addEventListener('submit',e=>{e.preventDefault();const f=fields(e.target);if(!f.wo_id){notice('No released work order available.',true);return;}action(e.target,`/api/work-orders/${Number(f.wo_id)}/issue`,{item_id:Number(f.item_id),location_id:Number(f.location_id),quantity:Number(f.quantity),reference:f.reference,command_id:command()},'Material issue posted.');});
+$('workOrderList').addEventListener('click',async e=>{const button=e.target.closest('button[data-action],button[data-op]');if(!button)return;button.disabled=true;try{const id=Number(button.dataset.wo),act=button.dataset.action||button.dataset.op;const path=button.dataset.op?`/api/work-orders/${id}/operations/${Number(button.dataset.seq)}/${act}`:`/api/work-orders/${id}/${act}`;await api(path,'POST',{actor:'demo.operator'});notice('Recorded: '+act+'.');await refresh();}catch(err){notice(err.message,true);}finally{button.disabled=false;}});
+$('bomForm').addEventListener('submit',e=>{e.preventDefault();const f=fields(e.target);action(e.target,'/api/boms',{product_sku:f.product_sku,product_name:f.product_name,revision:f.revision,components:[{item_id:Number(f.item_id),per_unit:Number(f.per_unit)}]},'Draft BOM created.');});
+$('bomList').addEventListener('click',async e=>{const b=e.target.closest('button[data-bom]');if(!b)return;b.disabled=true;try{await api('/api/boms/'+Number(b.dataset.bom)+'/activate','POST',{actor:'demo.engineering'});notice('BOM revision activated.');await refresh();}catch(err){notice(err.message,true);}finally{b.disabled=false;}});
+$('bomOrderForm').addEventListener('submit',e=>{e.preventDefault();const f=fields(e.target);if(!f.bom_id){notice('Activate a BOM first.',true);return;}action(e.target,'/api/boms/'+Number(f.bom_id)+'/work-orders',{number:f.number,quantity:Number(f.quantity)},'Work order created from active BOM.');});
+$('routingForm').addEventListener('submit',e=>{e.preventDefault();const f=fields(e.target);if(!f.wo_id){notice('Select a planned work order.',true);return;}action(e.target,'/api/work-orders/'+Number(f.wo_id)+'/routing',{operations:[{sequence:10,operation:'Assembly',work_center:'ASSY'},{sequence:20,operation:'Inspection',work_center:'QA'}]},'Routing added.');});
 refresh();
 </script></body></html>
