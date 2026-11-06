@@ -134,12 +134,20 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         init_db(path)
         yield
 
-    app = FastAPI(title="Meridian ERP — Local MVP",version="0.3.0",lifespan=lifespan,
+    app = FastAPI(title="Meridian ERP — Local MVP",version="0.4.0",lifespan=lifespan,
                   description="Synthetic, local-only inventory-to-production system; not a production ERP")
 
     @app.get("/", include_in_schema=False)
     def home():
         return FileResponse(static_home)
+
+    @app.get('/enterprise.css', include_in_schema=False)
+    def enterprise_css():
+        return FileResponse(static_home.parent / 'enterprise.css', media_type='text/css')
+
+    @app.get('/enterprise.js', include_in_schema=False)
+    def enterprise_js():
+        return FileResponse(static_home.parent / 'enterprise.js', media_type='text/javascript')
 
     @app.get("/api/health")
     def health():
@@ -315,6 +323,8 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         finally:db.close()
 
     register_routes(app,path,view_wo=view_wo,stock_at=stock_at,audit=audit,fail=fail,exists=exists)
+    from .enterprise import register_routes as register_enterprise_routes
+    register_enterprise_routes(app,path,audit=audit,fail=fail,exists=exists,stock_at=stock_at)
     return app
 
 app = create_app()
