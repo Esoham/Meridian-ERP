@@ -1,4 +1,4 @@
-# Meridian ERP — Inventory to Production MVP v0.2
+# Meridian ERP — Inventory to Production MVP v0.3
 
 **Independent concept prototype | Python / FastAPI / SQLite | Synthetic manufacturing data**
 
@@ -31,7 +31,18 @@ Open **http://127.0.0.1:8000** for the operator console, or **http://127.0.0.1:8
 6. **Complete:** Once all requirements are issued, complete the work order.
 7. **Trace:** Read stock ledger and audit events to see each write.
 
-The UI includes editable forms and action buttons; advanced workflows remain accessible in the OpenAPI docs.
+The v0.3 dashboard has separate sidebar views for Overview, Inventory, BOMs, Production, and Audit & History. It supports multi-component BOM and custom work-order entry, search/filter tables, material requirement previews, and CSV exports of the displayed local API history. Advanced workflows remain accessible in the OpenAPI docs.
+
+## What changed in v0.3
+
+- Reorganized the dashboard into five navigable sections with a persistent desktop sidebar and collapsible mobile menu.
+- Added **multi-component BOM editing** in the browser: add or remove lines, select distinct inventory items, and set per-unit quantity. Client-side validation rejects duplicate SKU rows and invalid quantities before posting to the existing BOM API.
+- Added a multi-component custom work-order form and a live component demand preview for active BOM revisions.
+- Made inventory and audit tables searchable, added an inventory warehouse filter, and CSV export of the currently fetched local data (most-recent 200 events for audit/ledger).
+- Preserved all existing backend/database workflows, tables, and migration behavior; **this is primarily a UI release**.
+- Browser-tested one full two-component manufacturing cycle and narrow-screen navigation against the local API using synthetic data; this is not a browser compatibility certification.
+
+**Upgrading an existing v0.2 folder:** Stop the server with `Ctrl+C`, back up `meridian.db`, replace the source files, and run `START_WINDOWS.bat` again. Do **not** delete the database or `.venv` folder. If you only want the visual update, replacing `meridian/index.html` is sufficient because the domain API is unchanged.
 
 ## Implemented guarantees
 

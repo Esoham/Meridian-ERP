@@ -134,7 +134,7 @@ def create_app(db_path: str | Path | None = None) -> FastAPI:
         init_db(path)
         yield
 
-    app = FastAPI(title="Meridian ERP — Local MVP",version="0.2.0",lifespan=lifespan,
+    app = FastAPI(title="Meridian ERP — Local MVP",version="0.3.0",lifespan=lifespan,
                   description="Synthetic, local-only inventory-to-production system; not a production ERP")
 
     @app.get("/", include_in_schema=False)
