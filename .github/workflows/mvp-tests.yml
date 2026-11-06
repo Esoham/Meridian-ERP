@@ -1,0 +1,47 @@
+name: MVP validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -e ".[dev]"
+      - name: Verify backend workflow tests
+        run: python -m pytest -q
+
+  dashboard-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check embedded dashboard JavaScript
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path("meridian/index.html").read_text(encoding="utf-8")
+          m=re.search(r"<script>([\s\S]*?)</script>",html)
+          assert m, "Embedded dashboard script not found"
+          Path("dashboard-check.js").write_text(m.group(1),encoding="utf-8")
+          PY
+          node --check dashboard-check.js
