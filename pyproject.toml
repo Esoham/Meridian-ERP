@@ -1,6 +1,6 @@
 [project]
 name = "meridian-erp-mvp"
-version = "0.5.0"
+version = "0.6.0"
 description = "Local-first manufacturing ERP workflow demonstration"
 requires-python = ">=3.11"
 dependencies = [
@@ -23,4 +23,4 @@ build-backend = "setuptools.build_meta"
 packages = ["meridian"]
 
 [tool.setuptools.package-data]
-meridian = ["index.html", "enterprise.js", "enterprise.css", "enterprise-foundations.js", "enterprise-foundations.css", "security.js"]
+meridian = ["index.html", "enterprise.js", "enterprise.css", "enterprise-foundations.js", "enterprise-foundations.css", "security.js", "enterprise-flow.js"]

@@ -15,7 +15,7 @@ def record_event(db, event, entity, entity_id, details):
 
 
 with db_write(path) as db:
-    for sku,name in [('BOLT-001','M6 Fastener'),('PANEL-001','Control Panel')]:
+    for sku,name in [('BOLT-001','M6 Fastener'),('PANEL-001','Control Panel'),('BOX-002','Control Box Assembly')]:
         c = db.execute("INSERT OR IGNORE INTO items(sku,name,uom) VALUES (?,?,'EA')", (sku,name))
         item_id = db.execute('SELECT id FROM items WHERE sku=?',(sku,)).fetchone()['id']
         if c.rowcount:

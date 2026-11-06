@@ -89,7 +89,8 @@ def init_db(path: str | Path) -> None:
         from .enterprise import EXTRA_SCHEMA as ENTERPRISE_SCHEMA
         from .foundation import FINANCE_SCHEMA
         from .security import SECURITY_SCHEMA
-        conn.executescript(SCHEMA + EXTRA_SCHEMA + ENTERPRISE_SCHEMA + FINANCE_SCHEMA + SECURITY_SCHEMA)
+        from .workflow_v6 import WORKFLOW_SCHEMA
+        conn.executescript(SCHEMA + EXTRA_SCHEMA + ENTERPRISE_SCHEMA + FINANCE_SCHEMA + SECURITY_SCHEMA + WORKFLOW_SCHEMA)
     finally:
         conn.close()
 

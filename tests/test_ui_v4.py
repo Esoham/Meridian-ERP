@@ -19,7 +19,7 @@ def test_erp_eleven_views_and_custom_controls():
 def test_static_frontend_resources_are_served(tmp_path):
     with TestClient(create_app(tmp_path/'ui.db')) as client:
         html=client.get('/')
-        assert html.status_code==200 and 'Enterprise Workspace v0.5' in html.text
+        assert html.status_code==200 and 'Integrated Manufacturing Workspace v0.6' in html.text
         css=client.get('/enterprise.css')
         assert css.status_code==200 and 'text/css' in css.headers['content-type'] and 'data-theme=dark' in css.text
         js=client.get('/enterprise.js')

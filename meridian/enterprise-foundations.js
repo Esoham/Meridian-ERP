@@ -21,6 +21,7 @@ async function refreshFinance(){
    api(`/api/finance/accounts?company_id=${selected}`),api(`/api/finance/journals?company_id=${selected}`),
    api(`/api/finance/trial-balance?company_id=${selected}`),api(`/api/finance/valuation?company_id=${selected}`)]);
  render();
+ window.dispatchEvent(new Event('meridian:finance-refreshed'));
  }catch(e){toast('Finance demo could not load: '+e.message,true);}
 }
 function render(){

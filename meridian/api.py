@@ -136,7 +136,7 @@ def create_app(db_path: str | Path | None = None, *, auth_required: bool | None 
         init_db(path)
         yield
 
-    app = FastAPI(title="Meridian ERP — Local MVP",version="0.5.0",lifespan=lifespan,
+    app = FastAPI(title="Meridian ERP — Integrated Local Demo",version="0.6.0",lifespan=lifespan,
                   description="Synthetic, local-only inventory-to-production system; not a production ERP")
 
     @app.get("/", include_in_schema=False)
@@ -158,6 +158,10 @@ def create_app(db_path: str | Path | None = None, *, auth_required: bool | None 
     @app.get('/enterprise-foundations.css', include_in_schema=False)
     def foundations_css():
         return FileResponse(static_home.parent / 'enterprise-foundations.css', media_type='text/css')
+
+    @app.get('/enterprise-flow.js', include_in_schema=False)
+    def flow_js():
+        return FileResponse(static_home.parent / 'enterprise-flow.js', media_type='text/javascript')
 
     @app.get('/security.js', include_in_schema=False)
     def security_js():
@@ -313,9 +317,11 @@ def create_app(db_path: str | Path | None = None, *, auth_required: bool | None 
             all_lines=db.execute("SELECT per_unit,issued_qty FROM work_order_lines WHERE work_order_id=?",(wo_id,)).fetchall()
             if all(x["issued_qty"] == x["per_unit"]*wo["quantity"] for x in all_lines):
                 db.execute("UPDATE work_orders SET status='materials_issued' WHERE id=?",(wo_id,))
+            from .workflow_v6 import accounting_material_issue
+            journal_id=accounting_material_issue(db,ledger_id=cur.lastrowid,item_id=body.item_id,qty=body.quantity,actor=body.actor,reference=wo["number"],audit=audit)
             audit(db,"stock.issued","stock_ledger",cur.lastrowid,body.actor,{**body.model_dump(),"work_order_id":wo_id})
             return {"ledger_id":cur.lastrowid,"entry_type":"issue","idempotent_replay":False,
-                    "on_hand":stock_at(db,body.item_id,body.location_id),"work_order":view_wo(db,wo_id)}
+                    "journal_id":journal_id,"on_hand":stock_at(db,body.item_id,body.location_id),"work_order":view_wo(db,wo_id)}
 
     @app.post("/api/work-orders/{wo_id}/complete")
     def complete_wo(wo_id:int,body: ActionIn):
@@ -341,6 +347,8 @@ def create_app(db_path: str | Path | None = None, *, auth_required: bool | None 
     register_enterprise_routes(app,path,audit=audit,fail=fail,exists=exists,stock_at=stock_at)
     from .foundation import register_routes as register_foundation_routes
     register_foundation_routes(app,path,audit=audit,fail=fail,exists=exists)
+    from .workflow_v6 import register_routes as register_flow_routes
+    register_flow_routes(app,path,fail=fail,audit=audit,view_wo=view_wo,stock_at=stock_at,exists=exists)
     from .security import install as install_security
     install_security(app,path,auth_required=auth_required)
     return app

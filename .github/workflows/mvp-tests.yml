@@ -38,6 +38,7 @@ jobs:
           node --check meridian/enterprise.js
           node --check meridian/enterprise-foundations.js
           node --check meridian/security.js
+          node --check meridian/enterprise-flow.js
       - name: Validate embedded dashboard JavaScript
         shell: bash
         run: |

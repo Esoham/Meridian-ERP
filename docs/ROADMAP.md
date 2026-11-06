@@ -19,3 +19,8 @@
 - Ordered work-order operations, required before job completion.
 
 **Still missing:** lot/serial tracking, standard costing, finished-good receipts, BOM validity dates, location transfers, reservations on planned orders, cancellations, multi-site planning, enterprise permissions, and customer data migration.
+
+
+## v0.6 portfolio stop line (November 2026)
+
+Connected purchasing/receiving, BOM-driven manufacturing, reservations, routing, quality holds, finished-goods closeout and opt-in standard-cost journal postings are included in the **local demonstration**. The portfolio milestone is complete. Further phases such as actual company isolation, secure production hosting, audit-ready accounting, AR/AP, lots/serials and external ERP migration are **unbuilt future commercial scope**. Do not describe a deployed ERP replacement or Fortune 500 adoption.

@@ -198,8 +198,10 @@ def register_routes(app: FastAPI, path: Path, *, audit, fail, exists, stock_at):
             db.execute('UPDATE purchase_order_lines SET received_qty=received_qty+? WHERE id=?',(body.quantity,line['id']))
             remaining=db.execute('SELECT COUNT(*) AS n FROM purchase_order_lines WHERE po_id=? AND received_qty<ordered_qty',(po_id,)).fetchone()['n']
             db.execute('UPDATE purchase_orders SET status=? WHERE id=?',('partial' if remaining else 'received',po_id))
+            from .workflow_v6 import accounting_po_receipt
+            journal_id=accounting_po_receipt(db,ledger_id=cur.lastrowid,item_id=body.item_id,qty=body.quantity,actor=body.actor,reference=po['number'],audit=audit)
             audit(db,'po.received','purchase_order',po_id,body.actor,{'sku':line['sku'],'quantity':body.quantity,'stock_ledger_id':cur.lastrowid})
-            return {'ledger_id':cur.lastrowid,'idempotent_replay':False,'on_hand':stock_at(db,body.item_id,body.location_id),'purchase_order':po_view(db,po_id)}
+            return {'ledger_id':cur.lastrowid,'idempotent_replay':False,'journal_id':journal_id,'on_hand':stock_at(db,body.item_id,body.location_id),'purchase_order':po_view(db,po_id)}
 
     @app.get('/api/quality-cases')
     def list_quality():

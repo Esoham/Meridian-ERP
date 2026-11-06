@@ -1,108 +1,83 @@
-# Meridian ERP — Customizable Manufacturing Workspace v0.5
+# Meridian ERP v0.6 — Integrated Manufacturing Portfolio Release
 
-**Independent concept prototype | Python / FastAPI / SQLite | Synthetic manufacturing data**
+[![ERP regression validation](https://github.com/Esoham/Meridian-ERP/actions/workflows/mvp-tests.yml/badge.svg)](https://github.com/Esoham/Meridian-ERP/actions/workflows/mvp-tests.yml)
 
-Meridian ERP is a local-first prototype that shows **receiving parts into a warehouse, checking material availability, releasing a work order, issuing components to production, and completing the job** with an append-only inventory ledger and audit history.
+**Portfolio-complete local prototype | Python, FastAPI, SQLite, vanilla JavaScript | Fictional data only**
 
-> **Not production ERP.** It has optional demo-only authentication and company-scoped manual journal entries, but no genuine multi-tenant data isolation, certified general ledger, automated business-continuity program, EDI, real ERP connectors, or production security controls. Do not expose the API to the internet or use it with employer/customer data. All sample records are fictional.
+Meridian ERP is an independently designed, customizable manufacturing workspace demonstrating realistic business workflows. It is **not** Infor software or an enterprise-ready replacement. The v0.6 milestone connects supplier purchasing, warehouse receipts, revision-controlled BOMs, work orders, production routing, finished-goods receipts, quality review, and **optional** illustrative financial postings.
 
-## Quick start
+## Quick start — Windows
 
-Requires Python 3.11+.
+Install standard Python 3.12 (recommended). From the extracted project folder, run:
+
+```cmd
+START_WINDOWS.bat
+```
+
+The launcher uses regular Python rather than free-threaded 3.13t, installs dependencies without persisting the pip download cache, backs up an existing pre-v0.6 database before schema migration, seeds fictional data idempotently, and starts the server on `127.0.0.1:8000`.
+
+Open **http://127.0.0.1:8000/** for the dashboard or **http://127.0.0.1:8000/docs** for the documented API.
+
+For manual launch:
 
 ```bash
 python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-pip install -e '.[dev]'
-python -m scripts.migrate_db  # backs up pre-v0.5 SQLite once
+# Activate the venv for your operating system.
+python -m pip install --no-cache-dir -e '.[dev]'
+python -m scripts.migrate_db
 python -m scripts.seed_demo
-uvicorn meridian.api:app --reload --host 127.0.0.1 --port 8000
+python -m uvicorn meridian.api:app --host 127.0.0.1 --port 8000
 ```
 
-Open **http://127.0.0.1:8000** for the operator console, or **http://127.0.0.1:8000/docs** for the interactive API. For Windows PowerShell, run `pip install -e ".[dev]"` using double quotes.
+**Upgrading v0.5:** Stop the old server with `Ctrl+C`. Make an independent copy of `meridian.db`. Copy **all v0.6 source files** over your existing installation without replacing `meridian.db` or `.venv`, and run `START_WINDOWS.bat`. Do not use the ZIP as a replacement database. New tables are additive. Keep a separate backup outside the project folder.
 
-## Demonstrate a complete flow
+## Major modules
 
-1. **Items & locations:** Seeded `BOLT-001` and `PANEL-001` in the `MAIN` warehouse.
-2. **Receipt:** The seed records +30 fasteners and +10 control panels (receipts are idempotent).
-3. **Work order:** `WO-DEMO-1001` is for three Control Box Assemblies, requiring 12 fasteners and 3 panels.
-4. **Release:** Verify sufficient on-hand stock, then release the planned work order.
-5. **Issue:** Issue 12 fasteners and 3 panels from `MAIN` using distinct command IDs.
-6. **Complete:** Once all requirements are issued, complete the work order.
-7. **Trace:** Read stock ledger and audit events to see each write.
+| Module | What is implemented | Key limitations |
+| --- | --- | --- |
+| Inventory | Item and warehouse master data; receipts, issues, reservations, append-only stock ledger | No transfers, cycle-count adjustments, lots, serials or true multi-company isolation |
+| Engineering | Multi-component BOMs, draft/active revisions, work-order snapshots | No effectivity dates, ECO approval workflow, alternates |
+| Production | Work orders, material reservations/issues, sequential routing, completion, **finished-goods receipt** | Full completion only; no scrap, partial builds, labor or overhead capture |
+| Purchasing | Supplier master, approvals, multi-line PO, partial/final stock receiving | No AP matching, returns, tax, or purchase-price-variance treatment |
+| Quality | Nonconformance cases and resolution; **high-severity open WO cases block FG receipt** | No lot quarantine, full inspection execution or regulatory certification |
+| Finance | Manual balanced entries, chart of accounts, trial balance, standard costs, **opt-in automatic standard-cost postings** | No fiscal periods, AR/AP, cash, taxes, price variance, GAAP/IFRS system |
+| Integrations | Read-only CSV receiving preview and local checksum-verified SQLite backups | No real ERP connectors, EDI, scheduled offsite backups |
+| UI and customization | Role-themed dashboard, module navigation, search, custom item fields, light/dark, table density, widget preferences | Most workspace preferences are browser-local |
+| Access controls | Optional local hashed passwords, session tokens and basic role restrictions | Demo login off by default; no production identity, SSO/MFA or security certification |
 
-The v0.4 workspace has nine screens, including purchasing, quality, management reports and configurable workspace settings. It supports a searchable item/PO/job catalog, multi-component BOM and work-order entry, validations, role-based presentation presets, and CSV exports. API endpoints remain accessible in the OpenAPI docs.
+## Demonstrate an end-to-end work order
 
-## What changed in v0.3
+1. In **Inventory**, use synthetic `BOLT-001`, `PANEL-001`, `BOX-002` and the `MAIN` warehouse. Initial demo stock includes 30 bolts, 10 panels and zero finished boxes.
+2. In **BOMs**, create and activate `BOX-002` Revision A using 4 bolts and 1 panel per finished product.
+3. Create `WO-2002` from the active BOM with a build quantity of 3. Add Assembly and Inspection routing.
+4. In **Production**, release and reserve materials, issue 12 bolts and 3 panels, finish both routing operations, and complete the work order.
+5. Under **Finished-goods receipt**, select `WO-2002`, finished SKU `BOX-002`, and `MAIN`, then post a receipt. The system adds three finished boxes in one transaction. A second receipt is blocked; a retry with the exact same command ID is idempotent.
+6. Inspect the **stock ledger**, **audit** and **finished-goods receipt history**. In a clean seed scenario, stock should show bolts 18, panels 7 and finished boxes 3.
 
-- Reorganized the dashboard into five navigable sections with a persistent desktop sidebar and collapsible mobile menu.
-- Added **multi-component BOM editing** in the browser: add or remove lines, select distinct inventory items, and set per-unit quantity. Client-side validation rejects duplicate SKU rows and invalid quantities before posting to the existing BOM API.
-- Added a multi-component custom work-order form and a live component demand preview for active BOM revisions.
-- Made inventory and audit tables searchable, added an inventory warehouse filter, and CSV export of the currently fetched local data (most-recent 200 events for audit/ledger).
-- Preserved all existing backend/database workflows, tables, and migration behavior; **this is primarily a UI release**.
-- Browser-tested one full two-component manufacturing cycle and narrow-screen navigation against the local API using synthetic data; this is not a browser compatibility certification.
+You can also use **Purchasing** to receive additional components against an approved supplier purchase order before manufacturing.
 
-**Upgrading an existing v0.2/v0.3 folder:** Stop the server with `Ctrl+C`, back up `meridian.db`, then extract v0.4 and copy **all** updated source files (including `meridian/enterprise.py`, `meridian/enterprise.js`, and `meridian/enterprise.css`) into your original folder. Do **not** overwrite or delete `meridian.db` or `.venv`. Run `START_WINDOWS.bat`, which creates another versioned SQLite backup before adding v0.4 tables. Replacing only `index.html` is **not sufficient** for v0.4.
+## Optional integrated accounting demo
 
-## Implemented guarantees
+**Off by default.** To enable: first create a finance company, then four distinct accounts: Raw Inventory (asset), GRNI (liability), WIP (asset), and Finished Goods Inventory (asset). Assign **positive standard costs** to any components you intend to buy or issue. In **Finance & Costing → Connected workflow accounting**, map and activate those four accounts. Configuration becomes locked for this local database.
 
-- On-hand balance is **derived from immutable stock ledger entries**, not adjusted by editing a balance cell.
-- Each stock command has a **unique idempotency key**; exact replays return the existing entry; conflicting replays fail.
-- SQLite `BEGIN IMMEDIATE` serializes read-check-write operations to protect against concurrent overspending **within the single local database**.
-- Material issues never exceed the associated work-order requirement or on-hand balance at the chosen location.
-- Work orders follow the state machine `planned → released → materials_issued → completed`.
-- Failed validations roll back their writes; audit history is append-only.
-- Schema enforces foreign keys, uniqueness, positive quantities, and reference consistency.
+After activation, the following posting examples are **atomic with their inventory movement**:
 
-## Run tests
+| Trigger | Debit | Credit | Basis |
+| --- | --- | --- | --- |
+| Approved PO received | Raw Inventory | GRNI | Received quantity × standard unit cost |
+| Component issued | Work In Process | Raw Inventory | Issued quantity × standard unit cost |
+| Finished box received | Finished Goods Inventory | Work In Process | Accumulated posted component issue cost |
+
+If a required standard cost is missing, the entire transaction fails without creating an inventory movement or journal. Existing legacy receipts and issues are **not backposted**, and a finished-goods receipt with unposted issue history is blocked while accounting is enabled. The accounting example omits price variances, labor, overhead, vendor invoices and fiscal close; it is **not a complete financial system**. All manufacturing inventory is still globally shared demo data rather than isolated by finance company.
+
+## Tests and source
 
 ```bash
 python -m pytest -q
 ```
 
-See [Architecture](docs/ARCHITECTURE.md), [Product roadmap](docs/ROADMAP.md), and `tests/` for verified behavior. These tests validate a prototype, **not** deployment readiness.
+GitHub Actions validates Python 3.11/3.12/3.13 and the modular dashboard JavaScript. Read [Final Release & Workflow Guide](docs/FINAL_RELEASE.md), [Enterprise Foundations](docs/ENTERPRISE_FOUNDATIONS.md), [Architecture](docs/ARCHITECTURE.md), and [Capability Matrix](docs/ERP_CAPABILITIES.md) for implementation and limitations. Source code is in `meridian/` and regression tests in `tests/`.
 
-## Deploying responsibly later
+## Safety and commercial scope
 
-Before real usage, add organization/user identity and authorization, comprehensive audit attribution, PostgreSQL, migrations, managed secrets, privacy controls, backups/restore drills, observability, business-document reversal flows, multi-warehouse policy, compliance review, and operational support. The current API accepts a demo `actor` string from clients and **does not authenticate it**.
-
-## Portfolio positioning
-
-This is a separate proof-of-concept for a potential manufacturing ERP platform—not a copy of Infor or any employer-owned system. It deliberately models public generic concepts using fictional records; the code, documentation, and unit tests can be independently reviewed.
-
-## Windows quick launch
-
-You can also run `START_WINDOWS.bat` from this folder. It creates a local virtual environment, installs the dependencies, seeds the fictional data, and starts the server on `127.0.0.1:8000`. Review scripts before running them; this is an independent demo, not an official ERP installer.
-
-
-## What v0.4 established — independent ERP workspace
-
-The interface uses familiar enterprise ERP concepts (role-focused workspaces, dense registers, search, controls and customizable widgets) without copying any proprietary UI or claiming compatibility with Infor.
-
-**Eleven functional workspace views (as of v0.5):** Overview, Inventory, BOM revisions, Production, Purchasing, Quality, Reports, Finance & Costing, Integrations, Audit and Workspace Settings. The dashboard includes a cross-module command search (`Ctrl+K`) and mobile navigation.
-
-**Purchasing:** supplier master; purchase order draft and approval; multiple PO lines with integer-cent unit prices; partial or final PO receiving with a duplicate-request guard; inbound receipts post atomically to the existing stock ledger and audit log. This is not a financial accounting or payments module.
-
-**Quality:** an auditable nonconformance register with source, severity, review status, and documented resolution. Quality cases do not yet enforce lot quarantine or issue blocking.
-
-**Customizations:** workspace label, colors, theme, table density, collapsed navigation, role-oriented homepage presets, individual dashboard widgets and cross-browser preference JSON export/import. These *appearance* settings are saved in the browser only; they do not confer permissions. Item custom fields (text, numeric, yes/no) and validated values are persisted in SQLite with audit records.
-
-**Safe upgrades:** `START_WINDOWS.bat` uses regular Python 3.12/3.13, runs `scripts.migrate_db` before loading sample data, and automatically backs up an existing pre-v0.5 SQLite database once to `backups/`. Backups are local development safeguards, not disaster recovery. **Before upgrading, close the server and keep an independent copy of `meridian.db`.**
-
-**Tests:** `python -m pytest -q` covers core workflows, BOM/revisions, reservations, routing, purchasing, quality, custom fields and migration. See [docs/ERP_CAPABILITIES.md](docs/ERP_CAPABILITIES.md) for completed features, limitations and future enterprise work.
-
-
-## What v0.5 adds — finance, security, backups and integration preview
-
-- **Finance & Costing:** separate illustrative finance entities, charts of accounts, append-only balanced journal entries, trial balances and unit-cost estimates. The existing inventory, warehouse, purchasing and production data remain shared demo data; this is **not** multi-company tenant isolation.
-- **Integrations:** paste CSV receipts for strict read-only validation against current SKU and warehouse codes. No data is imported until a separate authorized workflow is implemented.
-- **Backups and recovery:** `scripts.backup_db` produces an integrity-checked SQLite online backup and SHA-256 manifest; manual restore requires explicit confirmation and a new destination.
-- **Optional demo login:** hashed passwords, short-lived bearer sessions and three basic roles. Disabled by default to preserve existing local use. Not production IAM, SSO or enterprise-grade authorization.
-- **Testing:** 41 local automated tests passed, covering prior manufacturing workflows and new finance, security, import preflight and recovery checks.
-
-Read [Enterprise Foundations](docs/ENTERPRISE_FOUNDATIONS.md) for setup, security limitations and restore commands.
-
-### Commercial readiness disclaimer
-
-This is a **single-node local prototype** and educational product foundation. Only optional local demo sign-in, company-scoped sample journals and indicative standard costing have been implemented; robust tenant isolation, full accounting, secure deployments, lot/serial traceability, regulated quality workflows and real integrations are not provided. It is **not** ready to replace an organization's ERP or to process actual employer/customer data.
+This release is **portfolio-complete, not commercially production-ready**. It lacks authenticated audit attribution, enforced company/tenant isolation, certified accounting, PostgreSQL operations, business-document reversals, offsite disaster recovery, external integrations and enterprise security reviews. The app binds to `127.0.0.1`; never expose this prototype to the internet, use real employer/customer data, or claim replacement of Infor, SAP or Oracle systems. Code and synthetic data are independent of proprietary employer systems.
